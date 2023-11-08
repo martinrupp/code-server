@@ -1,0 +1,25 @@
+Make VSDA optional
+
+According to this comment from Microsoft here https://github.com/Microsoft/vscode/issues/72885#issuecomment-487714320 ,
+VSDA is only provided in the packaged version of VS Code, not in the OSS version.
+This means we can't use it in code-server, so we should make it optional, as the code
+can will otherwise throw a "file not found" error when trying to load it.
+
+
+Index: code-server/lib/vscode/src/vs/workbench/browser/web.main.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/browser/web.main.ts
++++ code-server/lib/vscode/src/vs/workbench/browser/web.main.ts
+@@ -298,8 +298,10 @@ export class BrowserMain extends Disposa
+ 		serviceCollection.set(IRemoteAuthorityResolverService, remoteAuthorityResolverService);
+ 
+ 		// Signing
+-		const signService = new SignService(productService);
+-		serviceCollection.set(ISignService, signService);
++		// SignService is the VSDA sign service, however
++		// vsda is not shipped with OSS version, see https://github.com/Microsoft/vscode/issues/72885
++		// const signService = new SignService(productService);
++		// serviceCollection.set(ISignService, signService);
+ 
+ 
+ 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
